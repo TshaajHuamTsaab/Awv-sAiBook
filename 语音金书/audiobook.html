@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>有声书</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav>
+    <a href="library.html">⬅ 返回书库</a>
+  </nav>
+
+  <div class="container fade-in">
+    <h1>🎧 有声书阅读</h1>
+
+    <div id="audio-controls">
+      <audio id="audio" controls></audio><br>
+      <button id="playBtn">播放</button>
+      <button id="pauseBtn">暂停</button>
+      <button id="speedBtn">倍速: 0.5x</button>
+    </div>
+
+    <div id="sentences"></div>
+  </div>
+
+  <script>
+    // 获取 URL 参数中的 JSON 文件
+    const urlParams = new URLSearchParams(window.location.search);
+    const file = urlParams.get("file") || "src/book1.json";
+
+    const audio = document.getElementById("audio");
+    const playBtn = document.getElementById("playBtn");
+    const pauseBtn = document.getElementById("pauseBtn");
+    const speedBtn = document.getElementById("speedBtn");
+    let speed = 0.5;
+
+    // 载入 JSON
+    fetch(file)
+      .then(res => res.json())
+      .then(data => {
+        if (data.audio) audio.src = data.audio;
+        if (data.sentences) {
+          const container = document.getElementById("sentences");
+          data.sentences.forEach((line, i) => {
+            const p = document.createElement("p");
+            p.textContent = line;
+            p.classList.add("sentence");
+            if (i === 0) p.classList.add("highlight");
+            container.appendChild(p);
+          });
+        }
+      });
+
+    playBtn.onclick = () => audio.play();
+    pauseBtn.onclick = () => audio.pause();
+    speedBtn.onclick = () => {
+      speed = speed === 3 ? 0.5 : speed + 0.5;
+      audio.playbackRate = speed;
+      speedBtn.textContent = `倍速: ${speed}x`;
+    };
+  </script>
+</body>
+</html>
