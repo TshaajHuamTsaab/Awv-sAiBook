@@ -189,6 +189,25 @@ button:hover { background:#0f0; color:#000; }
 #ebook-container, #ebook, .page, .chapter-content {
   font-size: inherit;
 }
+
+.back-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #222;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  z-index: 1000;
+}
+
+.back-button:hover {
+  background: #444;
+}
+
 </style>
 
 
@@ -205,7 +224,7 @@ button:hover { background:#0f0; color:#000; }
     <!-- Cover -->
     <div class="page active" data-page="0">
       <div id="cover-content">
-        <button class="backBtn" onclick="goBack()">⬅ 返回上一页</button>
+        <button class="backBtn" onclick="goBack()">⬅ 返回简介</button>
         <div class="chapter-content" style="text-align:center;">
           <h1>21世纪的21堂课</h1>
           <p>作者: 尤瓦尔·赫拉利</p>
@@ -219,6 +238,7 @@ button:hover { background:#0f0; color:#000; }
     <div class="page" data-page="1">
       <h2>目录</h2>
       <button onclick="toggleDirectory()" class="big-center-btn">📜 查看/隐藏目录</button>
+      <button id="toggle-theme" class="big-center-btn">🌈切换目光🔂</button>
       <button class="backBtn" onclick="goBack()">⬅ 返回上一页</button>
       <div id="scroll-directory" style="display:none; max-height:60vh; overflow-y:auto; border:1px solid #0f0; padding:10px; margin-top:10px;">
         <ol>
@@ -248,28 +268,132 @@ button:hover { background:#0f0; color:#000; }
     </div>
 
     <!-- Chapters -->
-    <div class="page" data-page="2"><h2>人工智能与工作</h2><div class="chapter-content"></div></div>
-    <div class="page" data-page="3"><h2>生物科技与未来身体</h2><div class="chapter-content"></div></div>
-    <div class="page" data-page="4"><h2>数据与隐私</h2><div class="chapter-content"></div></div>
-    <div class="page" data-page="5"><h2>网络安全与政治操控</h2><div class="chapter-content"></div></div>
-    <div class="page" data-page="6"><h2>恐怖主义与安全</h2><div class="chapter-content"></div></div>
-    <div class="page" data-page="7"><h2>民主与民族主义</h2><div class="chapter-content"></div></div>
-    <div class="page" data-page="8"><h2>教育与技能培养</h2><div class="chapter-content"></div></div>
-    <div class="page" data-page="9"><h2>自由与算法决定</h2><div class="chapter-content"></div></div>
-    <div class="page" data-page="10"><h2>世界秩序</h2><div class="chapter-content"></div></div>
-    <div class="page" data-page="11"><h2>意义与宗教</h2><div class="chapter-content"></div></div>
-    <div class="page" data-page="12"><h2>幸福与心理健康</h2><div class="chapter-content"></div></div>
-    <div class="page" data-page="13"><h2>教育的重要性</h2><div class="chapter-content"></div></div>
-    <div class="page" data-page="14"><h2>意识与自我认知</h2><div class="chapter-content"></div></div>
-    <div class="page" data-page="15"><h2>故事与价值观</h2><div class="chapter-content"></div></div>
-    <div class="page" data-page="16"><h2>环境与气候变化</h2><div class="chapter-content"></div></div>
-    <div class="page" data-page="17"><h2>核武器与战争</h2><div class="chapter-content"></div></div>
-    <div class="page" data-page="18"><h2>移民与人口流动</h2><div class="chapter-content"></div></div>
-    <div class="page" data-page="19"><h2>全球合作与治理</h2><div class="chapter-content"></div></div>
-    <div class="page" data-page="20"><h2>人工智能与不平等</h2><div class="chapter-content"></div></div>
-    <div class="page" data-page="21"><h2>人类未来的伦理</h2><div class="chapter-content"></div></div>
-    <div class="page" data-page="22"><h2>面对不确定性</h2><div class="chapter-content"></div></div>
-  </div>
+<div class="page" data-page="2">
+  <button class="back-button" onclick="showPage(1)">← 返回目录</button>
+  <h2>人工智能与工作</h2>
+  <div class="chapter-content"></div>
+</div>
+
+<div class="page" data-page="3">
+  <button class="back-button" onclick="showPage(1)">← 返回目录</button>
+  <h2>生物科技与未来身体</h2>
+  <div class="chapter-content"></div>
+</div>
+
+<div class="page" data-page="4">
+  <button class="back-button" onclick="showPage(1)">← 返回目录</button>
+  <h2>数据与隐私</h2>
+  <div class="chapter-content"></div>
+</div>
+
+<div class="page" data-page="5">
+  <button class="back-button" onclick="showPage(1)">← 返回目录</button>
+  <h2>网络安全与政治操控</h2>
+  <div class="chapter-content"></div>
+</div>
+
+<div class="page" data-page="6">
+  <button class="back-button" onclick="showPage(1)">← 返回目录</button>
+  <h2>恐怖主义与安全</h2>
+  <div class="chapter-content"></div>
+</div>
+
+<div class="page" data-page="7">
+  <button class="back-button" onclick="showPage(1)">← 返回目录</button>
+  <h2>民主与民族主义</h2>
+  <div class="chapter-content"></div>
+</div>
+
+<div class="page" data-page="8">
+  <button class="back-button" onclick="showPage(1)">← 返回目录</button>
+  <h2>教育与技能培养</h2>
+  <div class="chapter-content"></div>
+</div>
+
+<div class="page" data-page="9">
+  <button class="back-button" onclick="showPage(1)">← 返回目录</button>
+  <h2>自由与算法决定</h2>
+  <div class="chapter-content"></div>
+</div>
+
+<div class="page" data-page="10">
+  <button class="back-button" onclick="showPage(1)">← 返回目录</button>
+  <h2>世界秩序</h2>
+  <div class="chapter-content"></div>
+</div>
+
+<div class="page" data-page="11">
+  <button class="back-button" onclick="showPage(1)">← 返回目录</button>
+  <h2>意义与宗教</h2>
+  <div class="chapter-content"></div>
+</div>
+
+<div class="page" data-page="12">
+  <button class="back-button" onclick="showPage(1)">← 返回目录</button>
+  <h2>幸福与心理健康</h2>
+  <div class="chapter-content"></div>
+</div>
+
+<div class="page" data-page="13">
+  <button class="back-button" onclick="showPage(1)">← 返回目录</button>
+  <h2>教育的重要性</h2>
+  <div class="chapter-content"></div>
+</div>
+
+<div class="page" data-page="14">
+  <button class="back-button" onclick="showPage(1)">← 返回目录</button>
+  <h2>意识与自我认知</h2>
+  <div class="chapter-content"></div>
+</div>
+
+<div class="page" data-page="15">
+  <button class="back-button" onclick="showPage(1)">← 返回目录</button>
+  <h2>故事与价值观</h2>
+  <div class="chapter-content"></div>
+</div>
+
+<div class="page" data-page="16">
+  <button class="back-button" onclick="showPage(1)">← 返回目录</button>
+  <h2>环境与气候变化</h2>
+  <div class="chapter-content"></div>
+</div>
+
+<div class="page" data-page="17">
+  <button class="back-button" onclick="showPage(1)">← 返回目录</button>
+  <h2>核武器与战争</h2>
+  <div class="chapter-content"></div>
+</div>
+
+<div class="page" data-page="18">
+  <button class="back-button" onclick="showPage(1)">← 返回目录</button>
+  <h2>移民与人口流动</h2>
+  <div class="chapter-content"></div>
+</div>
+
+<div class="page" data-page="19">
+  <button class="back-button" onclick="showPage(1)">← 返回目录</button>
+  <h2>全球合作与治理</h2>
+  <div class="chapter-content"></div>
+</div>
+
+<div class="page" data-page="20">
+  <button class="back-button" onclick="showPage(1)">← 返回目录</button>
+  <h2>人工智能与不平等</h2>
+  <div class="chapter-content"></div>
+</div>
+
+<div class="page" data-page="21">
+  <button class="back-button" onclick="showPage(1)">← 返回目录</button>
+  <h2>人类未来的伦理</h2>
+  <div class="chapter-content"></div>
+</div>
+
+<div class="page" data-page="22">
+  <button class="back-button" onclick="showPage(1)">← 返回目录</button>
+  <h2>面对不确定性</h2>
+  <div class="chapter-content"></div>
+</div>
+
 
   <!-- Nav -->
 <div id="nav" style="display:flex; align-items:center; justify-content:space-between; padding:10px;">
@@ -299,6 +423,33 @@ button:hover { background:#0f0; color:#000; }
 <!-- Audio element (kept separate, not breaking layout) -->
 <audio id="chapter-audio"></audio>
 <script>
+  const themes = [
+    { bg: "rgba(0,0,0,0.85)", text: "#0f0", border: "#0f0" }, // 黑底绿字
+    { bg: "#fff", text: "#000", border: "#000" },               // 白底黑字
+    { bg: "#001f3f", text: "#fff", border: "#fff" },            // 深蓝底白字
+    { bg: "#fff8dc", text: "#5a3e1b", border: "#5a3e1b" }      // 浅黄底深棕字
+];
+
+let currentTheme = 0;
+
+document.getElementById("toggle-theme").addEventListener("click", () => {
+    currentTheme = (currentTheme + 1) % themes.length;
+    const theme = themes[currentTheme];
+
+    const container = document.getElementById("ebook-container");
+    const pages = document.querySelectorAll(".page, .chapter-content");
+
+    container.style.background = theme.bg;
+    pages.forEach(p => {
+        p.style.background = theme.bg;
+        p.style.color = theme.text;
+        if(p.classList.contains('chapter-content')) {
+            p.style.borderColor = theme.border;
+        }
+    });
+});
+
+
 document.addEventListener("DOMContentLoaded", () => {
     const audio = document.getElementById("chapter-audio");
     const playBtn = document.getElementById("play-btn");
