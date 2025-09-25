@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>通用阅读器</title>
+<style>
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #fdf6e3;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    transition: background 0.3s;
+  }
+  #bookTitle {
+    text-align: center;
+    padding: 15px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+  #book {
+    padding: 20px;
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0 auto 80px auto; /* 留出空间给底部导航栏 */
+  }
+  #nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    background: #fff;
+    border: 2px solid #333;
+    border-radius: 12px 12px 0 0;
+    padding: 8px;
+    gap: 5px;
+    z-index: 1000;
+  }
+  #nav button {
+    background: #eee;
+    color: #333;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  #nav button:hover {
+    background: #333;
+    color: #fff;
+  }
+</style>
+</head>
+<body>
+
+<div id="bookTitle">加载中...</div>
+<div id="book"></div>
+<div id="error" style="color:red;text-align:center;"></div>
+
+<!-- 固定导航栏 -->
+<div id="nav">
+  <button onclick="prevChapter()">⬅ 上一章</button>
+  <button onclick="nextChapter()">下一章 ➡</button>
+  <button onclick="toggleAudio()">🔊 播放/暂停</button>
+  <button id="speed-btn">速度: 1x</button>
+  <button onclick="changeTextSize(2)">🔎+</button>
+  <button onclick="changeTextSize(-2)">🔎-</button>
+  <button onclick="changeBackground()">🌈 背景</button>
+  <button onclick="goBack()">📖 返回首页</button>
+</div>
+
+<audio id="chapter-audio"></audio>
+
+<script>
+let currentPage = 0;
+let audio = document.getElementById('chapter-audio');
+let chapterNum;
+let bookFolder;
+
+const urlParams = new URLSearchParams(window.location.search);
+bookFolder = urlParams.get("book");
+chapterNum = urlParams.get("chapter");
+
+// 返回目录
+function goBack() {
+  window.location.href = "library.html";
+}
+
+// 加载章节 HTML
+function loadChapter(book, num) {
+  const file = `books/${book}/${num === "cover" ? "cover.html" : "chapter" + num + ".html"}`;
+
+  fetch(file)
+    .then(res => {
+      if (!res.ok) throw new Error("找不到文件: " + file);
+      return res.text();
+    })
+    .then(html => {
+      document.getElementById("book").innerHTML = html;
+      document.getElementById("bookTitle").textContent = `${book} - ${num === "cover" ? "封面" : "第 " + num + " 章"}`;
+      loadAudio(book, num);
+    })
+    .catch(err => {
+      document.getElementById("error").textContent = "❌ " + err.message;
+    });
+}
+
+// 加载音频
+function loadAudio(book, num) {
+  const audioFile = `books/${book}/audio/${num === "cover" ? "cover" : "chapter" + num}.mp3`;
+  audio.src = audioFile;
+  audio.onerror = () => {
+    document.getElementById("error").textContent = "❌ 无法加载音频: " + audioFile;
+  };
+}
+
+// 播放/暂停
+function toggleAudio() {
+  if (audio.paused) audio.play();
+  else audio.pause();
+}
+
+// 循环速度按钮
+const speedBtn = document.getElementById('speed-btn');
+const speeds = [0.5, 1, 1.5, 2];
+let speedIndex = 1;
+function cycleSpeed() {
+  speedIndex = (speedIndex + 1) % speeds.length;
+  audio.playbackRate = speeds[speedIndex];
+  speedBtn.textContent = '速度: ' + speeds[speedIndex] + 'x';
+}
+speedBtn.addEventListener('click', cycleSpeed);
+
+// 文字大小
+function changeTextSize(delta){
+  const bookDiv = document.getElementById("book");
+  const style = window.getComputedStyle(bookDiv, null).getPropertyValue('font-size');
+  const currentSize = parseFloat(style);
+  bookDiv.style.fontSize = (currentSize + delta) + 'px';
+}
+
+// 背景切换
+const backgrounds = ['#fdf6e3','#fff','#e0f7fa','#fce4ec','#e8f5e9'];
+let bgIndex = 0;
+function changeBackground(){
+  bgIndex = (bgIndex + 1) % backgrounds.length;
+  document.body.style.background = backgrounds[bgIndex];
+}
+
+// 章节切换
+function nextChapter() {
+  if(chapterNum === "cover") chapterNum = 1;
+  else chapterNum = parseInt(chapterNum) + 1;
+  loadChapter(bookFolder, chapterNum);
+}
+function prevChapter() {
+  if(chapterNum === "cover") return;
+  chapterNum = parseInt(chapterNum) - 1;
+  if(chapterNum < 1) chapterNum = "cover";
+  loadChapter(bookFolder, chapterNum);
+}
+
+// 初始化
+if (!bookFolder || !chapterNum) {
+  document.getElementById("bookTitle").textContent = "未选择书籍";
+  document.getElementById("book").innerHTML = "<p style='color:red'>❌ URL 缺少 ?book=名称 &chapter=数字</p>";
+} else {
+  loadChapter(bookFolder, chapterNum);
+}
+</script>
+</body>
+</html>
