@@ -23,7 +23,7 @@
     font-size: 16px;
     line-height: 1.6;
     max-width: 800px;
-    margin: 0 auto 80px auto; /* 留出空间给底部导航栏 */
+    margin: 0 auto 100px auto; /* 给底部导航栏留出空间 */
   }
   #nav {
     position: fixed;
@@ -41,17 +41,31 @@
     z-index: 1000;
   }
   #nav button {
-    background: #eee;
-    color: #333;
-    border: 1px solid #333;
     border-radius: 6px;
     padding: 5px 10px;
     cursor: pointer;
     font-size: 14px;
+    border: 1px solid #333;
+    transition: all 0.2s;
   }
-  #nav button:hover {
-    background: #333;
-    color: #fff;
+
+  /* 不同功能按钮颜色 */
+  .btn-prev { background: #ff6b6b; color:#fff; border-color: #ff4c4c; }
+  .btn-next { background: #4ecdc4; color:#fff; border-color: #38b2ac; }
+  .btn-play { background: #ffd93d; border-color: #e6c200; color: #000; }
+  .btn-font { background: #a29bfe; border-color: #6c5ce7; color: #fff; }
+  .btn-theme { background: #ff9ff3; border-color: #ff6f91; color: #000; }
+
+  /* hover / active 效果 */
+  .btn:hover { opacity: 0.85; transform: translateY(-2px); }
+  .btn:active { opacity: 1; transform: translateY(0); box-shadow: 0 0 8px rgba(0,0,0,0.3); }
+
+  /* 文字播放时高亮 */
+  .highlight { background-color: #fff59d; transition: background 0.3s; }
+
+  /* 手机触控增强 */
+  @media (hover: none) {
+    .btn { padding: 14px; font-size: 18px; }
   }
 </style>
 </head>
@@ -63,44 +77,39 @@
 
 <!-- 固定导航栏 -->
 <div id="nav">
-  <button onclick="prevChapter()">⬅ 上一章</button>
-  <button onclick="nextChapter()">下一章 ➡</button>
-  <button onclick="toggleAudio()">🔊 播放/暂停</button>
-  <button id="speed-btn">速度: 1x</button>
-  <button onclick="changeTextSize(2)">🔎+</button>
-  <button onclick="changeTextSize(-2)">🔎-</button>
-  <button onclick="changeBackground()">🌈 背景</button>
-  <button onclick="goBack()">📖 返回首页</button>
+  <button class="btn btn-prev" onclick="prevChapter()">⬅ 上一章</button>
+  <button class="btn btn-next" onclick="nextChapter()">下一章 ➡</button>
+  <button class="btn btn-play" id="play-btn" onclick="toggleAudio()">🔊 播放/暂停</button>
+  <button class="btn btn-font" id="speed-btn">速度: 1x</button>
+  <button class="btn btn-font" onclick="changeTextSize(2)">🔎+</button>
+  <button class="btn btn-font" onclick="changeTextSize(-2)">🔎-</button>
+  <button class="btn btn-theme" onclick="changeBackground()">🌈 背景</button>
+  <button class="btn" onclick="goBack()">📖 返回首页</button>
 </div>
 
 <audio id="chapter-audio"></audio>
 
 <script>
-let currentPage = 0;
 let audio = document.getElementById('chapter-audio');
-let chapterNum;
-let bookFolder;
+let playBtn = document.getElementById('play-btn');
+let bookDiv = document.getElementById('book');
 
 const urlParams = new URLSearchParams(window.location.search);
-bookFolder = urlParams.get("book");
-chapterNum = urlParams.get("chapter");
+let bookFolder = urlParams.get("book");
+let chapterNum = urlParams.get("chapter");
 
-// 返回目录
+// 返回首页
 function goBack() {
   window.location.href = "library.html";
 }
 
-// 加载章节 HTML
+// 加载章节
 function loadChapter(book, num) {
   const file = `books/${book}/${num === "cover" ? "cover.html" : "chapter" + num + ".html"}`;
-
   fetch(file)
-    .then(res => {
-      if (!res.ok) throw new Error("找不到文件: " + file);
-      return res.text();
-    })
+    .then(res => { if (!res.ok) throw new Error("找不到文件: " + file); return res.text(); })
     .then(html => {
-      document.getElementById("book").innerHTML = html;
+      bookDiv.innerHTML = html;
       document.getElementById("bookTitle").textContent = `${book} - ${num === "cover" ? "封面" : "第 " + num + " 章"}`;
       loadAudio(book, num);
     })
@@ -113,18 +122,34 @@ function loadChapter(book, num) {
 function loadAudio(book, num) {
   const audioFile = `books/${book}/audio/${num === "cover" ? "cover" : "chapter" + num}.mp3`;
   audio.src = audioFile;
-  audio.onerror = () => {
-    document.getElementById("error").textContent = "❌ 无法加载音频: " + audioFile;
-  };
+  audio.pause();
+  audio.currentTime = 0;
 }
 
 // 播放/暂停
 function toggleAudio() {
-  if (audio.paused) audio.play();
-  else audio.pause();
+  if (!audio.src) return;
+  if (audio.paused) {
+    audio.play();
+    playBtn.textContent = "⏸ 暂停";
+    highlightText(true);
+  } else {
+    audio.pause();
+    playBtn.textContent = "🔊 播放/继续";
+    highlightText(false);
+  }
 }
 
-// 循环速度按钮
+// 文字高亮
+function highlightText(enable) {
+  const paragraphs = bookDiv.querySelectorAll("p");
+  paragraphs.forEach(p => {
+    if(enable) p.classList.add("highlight");
+    else p.classList.remove("highlight");
+  });
+}
+
+// 倍速按钮
 const speedBtn = document.getElementById('speed-btn');
 const speeds = [0.5, 1, 1.5, 2];
 let speedIndex = 1;
@@ -137,7 +162,6 @@ speedBtn.addEventListener('click', cycleSpeed);
 
 // 文字大小
 function changeTextSize(delta){
-  const bookDiv = document.getElementById("book");
   const style = window.getComputedStyle(bookDiv, null).getPropertyValue('font-size');
   const currentSize = parseFloat(style);
   bookDiv.style.fontSize = (currentSize + delta) + 'px';
@@ -167,7 +191,7 @@ function prevChapter() {
 // 初始化
 if (!bookFolder || !chapterNum) {
   document.getElementById("bookTitle").textContent = "未选择书籍";
-  document.getElementById("book").innerHTML = "<p style='color:red'>❌ URL 缺少 ?book=名称 &chapter=数字</p>";
+  bookDiv.innerHTML = "<p style='color:red'>❌ URL 缺少 ?book=名称 &chapter=数字</p>";
 } else {
   loadChapter(bookFolder, chapterNum);
 }

@@ -528,7 +528,6 @@ button:hover { background:#0f0; color:#000; }
   <button onclick="nextChapter()">下一页</button>
 </div>
 
-<button id="repeat-btn" onclick="toggleRepeat()">🔁 循环关</button>
 <audio id="chapter-audio"></audio>
 
 <script>
@@ -595,29 +594,17 @@ function changeTextSize(delta){
 // ------------------
 // 音频控制
 // ------------------
-const audio = document.getElementById("chapter-audio");
-const repeatBtn = document.getElementById("repeat-btn"); // 你的按钮 id
-let isRepeat = false;
-// ------------------
-// 循环播放按钮功能
-// ------------------
-if(repeatBtn){ // 确保按钮存在
-  repeatBtn.addEventListener('click', () => {
-    isRepeat = !isRepeat; // 切换状态
-    repeatBtn.textContent = isRepeat ? "🔁 循环开" : "🔁 循环关";
-    audio.loop = isRepeat; // 设置 audio 的 loop 属性
-  });
-}
+const audio = document.getElementById('chapter-audio');
 const playBtn = document.getElementById('play-btn');
 
-const pageAudios = [
-  'src2/audio/cover.mp3',   // 封面
-  'src2/audio/chapter1.mp3', // 第1页/主题
-  'src2/audio/chapter2.mp3', // 第2页/主题
-  'src2/audio/chapter3.mp3', // 第3页/主题
-  'src2/audio/chapter4.mp3', // 第4页/主题
-  'src2/audio/chapter5.mp3', // 第5页/主题
-  'src2/audio/chapter6.mp3'  // 第6页/主题
+const audioList = [
+  'src2/audio/cover.mp3',
+  'src2/audio/chapter1.mp3',
+  'src2/audio/chapter2.mp3',
+  'src2/audio/chapter3.mp3',
+  'src2/audio/chapter4.mp3',
+  'src2/audio/chapter5.mp3',
+  'src2/audio/chapter6.mp3'
 ];
 
 let currentIndex = 0;
@@ -625,35 +612,41 @@ let isPlaying = false;
 
 // 播放/暂停按钮
 function toggleAudio() {
-  if (isPlaying) {
+  if (!isPlaying) {
+    playAudio(currentIndex);
+  } else {
     audio.pause();
     isPlaying = false;
     playBtn.textContent = '▶️ 播放';
-  } else {
-    playPageAudio(currentPage); // 播放当前页对应音频
   }
 }
 
-// ------------------
-// 播放当前页音频函数（点击播放按钮时触发）
-// ------------------
-function playPageAudio(index) {
-  const audioFile = pageAudios[index]; // 改成 pageAudios
-  if (!audioFile) return;
+// 播放指定音频
+function playAudio(index) {
+  if (index >= audioList.length) {
+    // 如果超出范围，循环回到第一个音频
+    currentIndex = 0;
+    index = 0;
+  }
 
-  audio.src = audioFile;
+  audio.src = audioList[index];
   audio.load();
   audio.play().then(() => {
     isPlaying = true;
     playBtn.textContent = '⏸ 暂停';
-  }).catch(err => console.error('播放失败:', err));
+  }).catch(err => {
+    console.error('播放失败:', err);
+  });
 
-  // 音频播放结束，不自动播放下一章
+  // 音频播放结束，自动播放下一首
   audio.onended = () => {
-    isPlaying = false;
-    playBtn.textContent = '▶️ 播放';
-  };
+    currentIndex++;
+    // 循环播放
+    if (currentIndex >= audioList.length) currentIndex = 0;
+    playAudio(currentIndex);
+  }
 }
+
 
 // 改变播放速度
 function changeSpeed() {
