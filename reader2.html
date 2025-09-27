@@ -2,45 +2,81 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>通用阅读器</title>
+<title>炫酷阅读器HUD</title>
 <style>
-  body {
-    font-family: "Segoe UI", Arial, sans-serif;
-    background: #fdf6e3;
-    margin: 0;
-    padding: 0;
-    color: #333;
-  }
-  #bookTitle {
-    text-align: center;
-    padding: 15px;
-    font-size: 20px;
-    font-weight: bold;
-  }
-  #book {
-    padding: 20px;
-    font-size: 16px;
-    line-height: 1.6;
-    max-width: 800px;
-    margin: 0 auto 420px auto; /* 留下圆形导航空间 */
-  }
- /* ====== 圆形遥控器外框 ====== */
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #fdf6e3;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+/* 书籍标题与内容 */
+#bookTitle {
+  text-align: center;
+  padding: 18px;
+  font-size: 23px;
+  font-weight: bold;
+}
+#book {
+  padding: 23px;
+  font-size: 18px;
+  line-height: 1.7;
+  max-width: 800px;
+  margin: 0 auto 500px auto; /* 给HUD留空间 */
+}
+
+/* ====== HUD 外层彩虹环 ====== */
+#outer-ring {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  border: 8px solid transparent;
+  background: conic-gradient(red, orange, yellow, green, blue, purple, red);
+  animation: rotateOuter 20s linear infinite, colorShift 10s linear infinite;
+  z-index: 899;
+  pointer-events: none; /* 不阻挡点击 */
+}
+
+/* ====== 内圈导航 ====== */
 #nav-circle {
   position: fixed;
   bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
-  width: 400px;
-  height: 400px;
+  width: 460px;
+  height: 460px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255,255,255,0.15);
   backdrop-filter: blur(16px);
-  border: 3px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+  border: 3.5px solid rgba(255,255,255,0.5);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.4);
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: visible;
+}
+
+/* 内圈旋转彩虹环 */
+.rotating-ring {
+  position: absolute;
+  top:50%;
+  left:50%;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  border: 4px solid;
+  border-image: linear-gradient(90deg, red, orange, yellow, green, blue, purple, red) 1;
+  transform: translate(-50%, -50%) rotate(0deg);
+  animation: rotateRing 8s linear infinite, colorShift 8s linear infinite;
+  z-index: 950;
+  pointer-events: none;
 }
 
 /* 中间遥控器区 */
@@ -50,89 +86,75 @@
   height: 100%;
 }
 
-/* 中间播放按钮固定不动 */
-.remote .btn-play {
+/* 中心播放按钮 */
+.btn-play {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top:50%;
+  left:50%;
   transform: translate(-50%, -50%);
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
-  font-size: 36px;
+  font-size: 44px;
   font-weight: bold;
   background: #96dd13;
-  border: 3px solid #e6c200;
+  border: 4px solid #e6c200;
   color: #191f1a;
   cursor: pointer;
-  box-shadow: 0 0 25px rgba(39, 192, 28, 0.95);
+  box-shadow: 0 0 28px rgba(39,192,28,0.95);
+  z-index: 1005;
   transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
-.remote .btn-play:hover {
-  transform: translate(-50%, -50%) scale(1.1);
-}
+.btn-play:hover { transform: translate(-50%, -50%) scale(1.1); }
 
-/* 其他按钮样式 */
-.remote .btn {
+/* 环绕按钮 */
+.btn {
   position: absolute;
-  width: 90px;
-  height: 90px;
+  width: 104px;
+  height: 104px;
+  line-height: 104px;
   border-radius: 50%;
-  font-size: 22px;
+  font-size: 25px;
   font-weight: bold;
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  background: rgba(255, 255, 255, 0.25);
+  border: 2.3px solid rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.25);
   backdrop-filter: blur(10px);
   cursor: pointer;
-  transition: all 0.3s ease;
-  color: #222;
+  transition: all 0.2s ease;
   text-align: center;
-  line-height: 90px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.2);
+  color: #222;
+  box-shadow: 0 0 9px rgba(0,0,0,0.2);
 }
-.remote .btn:hover {
-  transform: scale(1.15);
-  box-shadow: 0 0 16px rgba(0,0,0,0.45);
-}
+.btn:hover { transform: scale(1.1); box-shadow: 0 0 18px rgba(0,0,0,0.45); }
 
-/* 各按钮颜色 */
-.btn-prev { background: #ff6b6b; border-color: #ff4c4c; color:#fff; }
-.btn-next { background: #4ecdc4; border-color: #38b2ac; color:#fff; }
-.btn-font-plus { background: #a29bfe; border-color: #6c5ce7; color:#fff; }
-.btn-font-minus { background: #6c5ce7; border-color: #341f97; color:#fff; }
-.btn-speed { background: #ff9ff3; border-color: #ff6f91; color:#000; }
-.btn-theme { background: #81ecec; border-color: #00b894; color:#000; }
-.btn-home { background: #fd79a8; border-color: #d63031; color:#fff; }
-.btn-light { background: #ffe066; border-color: #ffb703; color:#000; }
+/* 按钮颜色 */
+.btn-prev { background:#ff6b6b; border-color:#ff4c4c; color:#fff; }
+.btn-next { background:#4ecdc4; border-color:#38b2ac; color:#fff; }
+.btn-font-plus { background:#a29bfe; border-color:#6c5ce7; color:#fff; }
+.btn-font-minus { background:#6c5ce7; border-color:#341f97; color:#fff; }
+.btn-speed { background:#ff9ff3; border-color:#ff6f91; color:#000; }
+.btn-theme { background:#81ecec; border-color:#00b894; color:#000; }
+.btn-home { background:#fd79a8; border-color:#d63031; color:#fff; }
+.btn-light { background:#ffe066; border-color:#ffb703; color:#000; }
 
-/* 按钮环绕布局 */
-.btn-prev { top: 50%; left: 5%; transform: translateY(-50%); }
-.btn-next { top: 50%; right: 5%; transform: translateY(-50%); }
-.btn-font-plus { top: 8%; left: 50%; transform: translateX(-50%); }
-.btn-font-minus { bottom: 8%; left: 50%; transform: translateX(-50%); }
-.btn-speed { top: 18%; right: 18%; }
-.btn-theme { bottom: 18%; left: 18%; }
-.btn-home { bottom: 18%; right: 18%; }
-/* 赏光按钮放在左上角 */
-.btn-light { top: 18%; left: 18%; }
+/* 按钮位置 */
+.btn-prev { top:50%; left:5%; transform: translateY(-50%);}
+.btn-next { top:50%; right:5%; transform: translateY(-50%);}
+.btn-font-plus { top:8%; left:50%; transform: translateX(-50%);}
+.btn-font-minus { bottom:8%; left:50%; transform: translateX(-50%);}
+.btn-speed { top:18%; right:18%;}
+.btn-theme { bottom:18%; left:18%;}
+.btn-home { bottom:18%; right:18%;}
+.btn-light { top:18%; left:18%;}
 
-/* 所有按钮按下或聚焦发光效果 */
-.remote .btn:active,
-.remote .btn:focus {
-  box-shadow: 0 0 20px currentColor, 0 0 40px currentColor, 0 0 60px currentColor;
-}
+/* 按钮按下效果 */
+.btn:active, .btn:focus { box-shadow: 0 0 22px currentColor,0 0 45px currentColor,0 0 65px currentColor; }
 
-/* 赏光按钮彩虹动态 */
-@keyframes rainbowGlow {
-  0%{ box-shadow: 0 0 10px red, 0 0 20px orange, 0 0 30px yellow; }
-  25%{ box-shadow: 0 0 10px orange, 0 0 20px yellow, 0 0 30px green; }
-  50%{ box-shadow: 0 0 10px yellow, 0 0 20px green, 0 0 30px blue; }
-  75%{ box-shadow: 0 0 10px green, 0 0 20px blue, 0 0 30px purple; }
-  100%{ box-shadow: 0 0 10px red, 0 0 20px orange, 0 0 30px yellow; }
-}
-.btn-light:active {
-  animation: rainbowGlow 1s linear infinite;
-}
+/* 彩虹动态动画 */
+@keyframes rotateRing { from{ transform: translate(-50%, -50%) rotate(0deg); } to{ transform: translate(-50%, -50%) rotate(360deg); } }
+@keyframes colorShift { 0%{ filter:hue-rotate(0deg);} 100%{filter:hue-rotate(360deg);} }
+@keyframes rotateOuter { from{ transform: translateX(-50%) rotate(0deg); } to{ transform: translateX(-50%) rotate(360deg); } }
+
 </style>
 </head>
 <body>
@@ -141,30 +163,26 @@
 <div id="book"></div>
 <div id="error" style="color:red;text-align:center;"></div>
 
-<!-- 圆形遥控器导航 -->
+<!-- 外层彩虹环 -->
+<div id="outer-ring"></div>
+
+<!-- 内圈导航 -->
 <div id="nav-circle">
   <div class="remote">
-    <!-- 中间播放按钮 -->
+    <!-- 内圈旋转环 -->
+    <div class="rotating-ring"></div>
+
+    <!-- 中心播放按钮 -->
     <button class="btn btn-play" id="play-btn" onclick="toggleAudio()">▶</button>
 
-    <!-- 上一章 / 下一章 -->
+    <!-- 环绕按钮 -->
     <button class="btn btn-prev" onclick="prevChapter()">⬅</button>
     <button class="btn btn-next" onclick="nextChapter()">➡</button>
-
-    <!-- 文字大小 -->
     <button class="btn btn-font-plus" onclick="changeTextSize(2)">🔎+</button>
     <button class="btn btn-font-minus" onclick="changeTextSize(-2)">🔎-</button>
-
-    <!-- 速度 -->
     <button class="btn btn-speed" id="speed-btn">1x</button>
-
-    <!-- 背景 -->
     <button class="btn btn-theme" onclick="changeBackground()">🌈</button>
-
-    <!-- 返回首页 -->
     <button class="btn btn-home" onclick="goBack()">🏠</button>
-
-    <!-- 赏光按钮 -->
     <button class="btn btn-light" id="btn-light">✨</button>
   </div>
 </div>
@@ -196,10 +214,7 @@ function toggleAudio() {
 
 function highlightText(enable){
   const paragraphs = bookDiv.querySelectorAll("p");
-  paragraphs.forEach(p=>{
-    if(enable) p.classList.add("highlight");
-    else p.classList.remove("highlight");
-  });
+  paragraphs.forEach(p=>enable?p.classList.add("highlight"):p.classList.remove("highlight"));
 }
 
 speedBtn.addEventListener("click", ()=>{
@@ -216,10 +231,7 @@ function changeTextSize(delta){
 
 const backgrounds = ['#fdf6e3','#fff','#e0f7fa','#fce4ec','#e8f5e9'];
 let bgIndex = 0;
-function changeBackground(){
-  bgIndex = (bgIndex + 1) % backgrounds.length;
-  document.body.style.background = backgrounds[bgIndex];
-}
+function changeBackground(){ bgIndex=(bgIndex+1)%backgrounds.length; document.body.style.background=backgrounds[bgIndex]; }
 
 function goBack(){ window.location.href="library.html"; }
 
@@ -230,14 +242,9 @@ let chapterNum = urlParams.get("chapter");
 
 function loadChapter(book, num){
   const file = `books/${book}/${num==="cover"?"cover.html":"chapter"+num+".html"}`;
-  fetch(file)
-    .then(res=>{if(!res.ok) throw new Error("找不到文件:"+file); return res.text();})
-    .then(html=>{
-      bookDiv.innerHTML = html;
-      document.getElementById("bookTitle").textContent = `${book} - ${num==="cover"?"封面":"第 "+num+" 章"}`;
-      loadAudio(book,num);
-    })
-    .catch(err=>{document.getElementById("error").textContent="❌ "+err.message;});
+  fetch(file).then(res=>{if(!res.ok) throw new Error("找不到文件:"+file); return res.text();})
+  .then(html=>{ bookDiv.innerHTML = html; document.getElementById("bookTitle").textContent = `${book} - ${num==="cover"?"封面":"第 "+num+" 章"}`; loadAudio(book,num); })
+  .catch(err=>{document.getElementById("error").textContent="❌ "+err.message;});
 }
 
 function loadAudio(book,num){
@@ -249,12 +256,13 @@ function loadAudio(book,num){
 
 function nextChapter(){
   if(chapterNum==="cover") chapterNum=1;
-  else chapterNum = parseInt(chapterNum)+1;
+  else chapterNum=parseInt(chapterNum)+1;
   loadChapter(bookFolder,chapterNum);
 }
+
 function prevChapter(){
   if(chapterNum==="cover") return;
-  chapterNum = parseInt(chapterNum)-1;
+  chapterNum=parseInt(chapterNum)-1;
   if(chapterNum<1) chapterNum="cover";
   loadChapter(bookFolder,chapterNum);
 }
@@ -263,9 +271,8 @@ function prevChapter(){
 if(!bookFolder || !chapterNum){
   document.getElementById("bookTitle").textContent = "未选择书籍";
   bookDiv.innerHTML="<p style='color:red'>❌ URL 缺少 ?book=名称 &chapter=数字</p>";
-}else{
-  loadChapter(bookFolder,chapterNum);
-}
+}else{ loadChapter(bookFolder,chapterNum); }
+
 </script>
 </body>
 </html>
