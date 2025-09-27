@@ -23,72 +23,84 @@
     font-size: 16px;
     line-height: 1.6;
     max-width: 800px;
-    margin: 0 auto 100px auto; /* 给底部导航栏留出空间 */
+    margin: 0 auto 420px auto; /* 留下圆形导航空间 */
   }
-  #nav {
+  /* ====== 圆形遥控器外框 ====== */
+  #nav-circle {
     position: fixed;
-    bottom: 0;
+    bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    background: #fff;
-    border: 2px solid #333;
-    border-radius: 12px 12px 0 0;
-    padding: 8px;
-    gap: 5px;
+    width: 380px;
+    height: 380px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 3px solid rgba(255,255,255,0.5);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.4);
     z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  #nav button {
-    border-radius: 6px;
-    padding: 5px 10px;
+  .remote {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  /* 中间播放按钮 */
+  .remote .btn-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    font-size: 36px;
+    font-weight: bold;
+    background: #ffd93d;
+    border: 3px solid #e6c200;
+    color: #000;
     cursor: pointer;
-    font-size: 14px;
-    border: 1px solid #333;
-    transition: all 0.2s;
+    box-shadow: 0 0 20px rgba(255,217,61,0.95);
+    transition: transform 0.2s ease;
   }
-
-  /* 通用按钮 */
-#nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-  margin: 10px 0;
-}
-
-#nav .btn {
-  flex: 1 1 40%;
-  padding: 10px 12px;
-  font-size: 16px;
-  font-weight: bold;
-  border: 2px solid transparent;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  color: #fff;
-  text-shadow: 0 0 2px #000;
-}
-
-  /* 不同功能按钮颜色 */
-  .btn-prev { background: #ff6b6b; color:#fff; border-color: #ff4c4c; }
-  .btn-next { background: #4ecdc4; color:#fff; border-color: #38b2ac; }
-  .btn-play { background: #ffd93d; border-color: #e6c200; color: #000; }
-  .btn-font { background: #a29bfe; border-color: #6c5ce7; color: #fff; }
-  .btn-theme { background: #ff9ff3; border-color: #ff6f91; color: #000; }
-
-  /* hover / active 效果 */
-  .btn:hover { opacity: 0.85; transform: translateY(-2px); }
-  .btn:active { opacity: 1; transform: translateY(0); box-shadow: 0 0 8px rgba(0,0,0,0.3); }
-
-  /* 文字播放时高亮 */
+  .remote .btn-play:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+  /* 其他按钮 */
+  .remote .btn {
+    position: absolute;
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    font-size: 22px;
+    font-weight: bold;
+    border: 2px solid rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #222;
+  }
+  .remote .btn:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 16px rgba(0,0,0,0.45);
+  }
+  /* 分开文字大小按钮 */
+  .btn-font-plus { top: 12%; left: 50%; transform: translateX(-50%); }
+  .btn-font-minus { bottom: 12%; left: 50%; transform: translateX(-50%); }
+  /* 环绕其他按钮 */
+  .btn-prev   { top: 50%; left: 5%; transform: translateY(-50%); }
+  .btn-next   { top: 50%; right: 5%; transform: translateY(-50%); }
+  .btn-speed  { top: 18%; right: 18%; }
+  .btn-theme  { bottom: 18%; left: 18%; }
+  .btn-home   { bottom: 18%; right: 18%; }
+  /* 文字高亮 */
   .highlight { background-color: #fff59d; transition: background 0.3s; }
-
-  /* 手机触控增强 */
-  @media (hover: none) {
-    .btn { padding: 14px; font-size: 18px; }
-  }
 </style>
 </head>
 <body>
@@ -97,99 +109,76 @@
 <div id="book"></div>
 <div id="error" style="color:red;text-align:center;"></div>
 
-<!-- 固定导航栏 -->
-<div id="nav">
-  <button class="btn btn-prev" onclick="prevChapter()">⬅ 上一章</button>
-  <button class="btn btn-next" onclick="nextChapter()">下一章 ➡</button>
-  <button class="btn btn-play" id="play-btn" onclick="toggleAudio()">🔊 播放/暂停</button>
-  <button class="btn btn-font" id="speed-btn">速度: 1x</button>
-  <button class="btn btn-font" onclick="changeTextSize(2)">🔎+</button>
-  <button class="btn btn-font" onclick="changeTextSize(-2)">🔎-</button>
-  <button class="btn btn-theme" onclick="changeBackground()">🌈 背景</button>
-  <button class="btn" onclick="goBack()">📖 返回首页</button>
+<!-- 圆形遥控器导航 -->
+<div id="nav-circle">
+  <div class="remote">
+    <!-- 播放按钮 -->
+    <button class="btn btn-play" id="play-btn" onclick="toggleAudio()">▶</button>
+
+    <!-- 上一章 / 下一章 -->
+    <button class="btn btn-prev" onclick="prevChapter()">⬅</button>
+    <button class="btn btn-next" onclick="nextChapter()">➡</button>
+
+    <!-- 文字大小 分开 -->
+    <button class="btn btn-font btn-font-plus" onclick="changeTextSize(2)">🔎+</button>
+    <button class="btn btn-font btn-font-minus" onclick="changeTextSize(-2)">🔎-</button>
+
+    <!-- 速度 -->
+    <button class="btn btn-speed" id="speed-btn">1x</button>
+
+    <!-- 背景 -->
+    <button class="btn btn-theme" onclick="changeBackground()">🌈</button>
+
+    <!-- 返回首页 -->
+    <button class="btn btn-home" onclick="goBack()">🏠</button>
+  </div>
 </div>
 
 <audio id="chapter-audio"></audio>
 
 <script>
-let audio = document.getElementById('chapter-audio');
-let playBtn = document.getElementById('play-btn');
-let bookDiv = document.getElementById('book');
+const audio = document.getElementById("chapter-audio");
+const playBtn = document.getElementById("play-btn");
+const speedBtn = document.getElementById("speed-btn");
+const bookDiv = document.getElementById("book");
 
-const urlParams = new URLSearchParams(window.location.search);
-let bookFolder = urlParams.get("book");
-let chapterNum = urlParams.get("chapter");
+let speeds = [0.5,1,1.5,2];
+let speedIndex = 1;
+audio.playbackRate = speeds[speedIndex];
 
-// 返回首页
-function goBack() {
-  window.location.href = "library.html";
-}
-
-// 加载章节
-function loadChapter(book, num) {
-  const file = `books/${book}/${num === "cover" ? "cover.html" : "chapter" + num + ".html"}`;
-  fetch(file)
-    .then(res => { if (!res.ok) throw new Error("找不到文件: " + file); return res.text(); })
-    .then(html => {
-      bookDiv.innerHTML = html;
-      document.getElementById("bookTitle").textContent = `${book} - ${num === "cover" ? "封面" : "第 " + num + " 章"}`;
-      loadAudio(book, num);
-    })
-    .catch(err => {
-      document.getElementById("error").textContent = "❌ " + err.message;
-    });
-}
-
-// 加载音频
-function loadAudio(book, num) {
-  const audioFile = `books/${book}/audio/${num === "cover" ? "cover" : "chapter" + num}.mp3`;
-  audio.src = audioFile;
-  audio.pause();
-  audio.currentTime = 0;
-}
-
-// 播放/暂停
 function toggleAudio() {
-  if (!audio.src) return;
-  if (audio.paused) {
+  if(!audio.src) return;
+  if(audio.paused){
     audio.play();
-    playBtn.textContent = "⏸ 暂停";
+    playBtn.textContent = "⏸";
     highlightText(true);
-  } else {
+  }else{
     audio.pause();
-    playBtn.textContent = "🔊 播放/继续";
+    playBtn.textContent = "▶";
     highlightText(false);
   }
 }
 
-// 文字高亮
-function highlightText(enable) {
+function highlightText(enable){
   const paragraphs = bookDiv.querySelectorAll("p");
-  paragraphs.forEach(p => {
+  paragraphs.forEach(p=>{
     if(enable) p.classList.add("highlight");
     else p.classList.remove("highlight");
   });
 }
 
-// 倍速按钮
-const speedBtn = document.getElementById('speed-btn');
-const speeds = [0.5, 1, 1.5, 2];
-let speedIndex = 1;
-function cycleSpeed() {
-  speedIndex = (speedIndex + 1) % speeds.length;
+speedBtn.addEventListener("click", ()=>{
+  speedIndex = (speedIndex +1) % speeds.length;
   audio.playbackRate = speeds[speedIndex];
-  speedBtn.textContent = '速度: ' + speeds[speedIndex] + 'x';
-}
-speedBtn.addEventListener('click', cycleSpeed);
+  speedBtn.textContent = speeds[speedIndex] + "x";
+});
 
-// 文字大小
 function changeTextSize(delta){
   const style = window.getComputedStyle(bookDiv, null).getPropertyValue('font-size');
   const currentSize = parseFloat(style);
   bookDiv.style.fontSize = (currentSize + delta) + 'px';
 }
 
-// 背景切换
 const backgrounds = ['#fdf6e3','#fff','#e0f7fa','#fce4ec','#e8f5e9'];
 let bgIndex = 0;
 function changeBackground(){
@@ -197,25 +186,50 @@ function changeBackground(){
   document.body.style.background = backgrounds[bgIndex];
 }
 
+function goBack(){ window.location.href="library.html"; }
+
 // 章节切换
-function nextChapter() {
-  if(chapterNum === "cover") chapterNum = 1;
-  else chapterNum = parseInt(chapterNum) + 1;
-  loadChapter(bookFolder, chapterNum);
+const urlParams = new URLSearchParams(window.location.search);
+let bookFolder = urlParams.get("book");
+let chapterNum = urlParams.get("chapter");
+
+function loadChapter(book, num){
+  const file = `books/${book}/${num==="cover"?"cover.html":"chapter"+num+".html"}`;
+  fetch(file)
+    .then(res=>{if(!res.ok) throw new Error("找不到文件:"+file); return res.text();})
+    .then(html=>{
+      bookDiv.innerHTML = html;
+      document.getElementById("bookTitle").textContent = `${book} - ${num==="cover"?"封面":"第 "+num+" 章"}`;
+      loadAudio(book,num);
+    })
+    .catch(err=>{document.getElementById("error").textContent="❌ "+err.message;});
 }
-function prevChapter() {
-  if(chapterNum === "cover") return;
-  chapterNum = parseInt(chapterNum) - 1;
-  if(chapterNum < 1) chapterNum = "cover";
-  loadChapter(bookFolder, chapterNum);
+
+function loadAudio(book,num){
+  const audioFile = `books/${book}/audio/${num==="cover"?"cover":"chapter"+num}.mp3`;
+  audio.src = audioFile;
+  audio.pause();
+  audio.currentTime = 0;
+}
+
+function nextChapter(){
+  if(chapterNum==="cover") chapterNum=1;
+  else chapterNum = parseInt(chapterNum)+1;
+  loadChapter(bookFolder,chapterNum);
+}
+function prevChapter(){
+  if(chapterNum==="cover") return;
+  chapterNum = parseInt(chapterNum)-1;
+  if(chapterNum<1) chapterNum="cover";
+  loadChapter(bookFolder,chapterNum);
 }
 
 // 初始化
-if (!bookFolder || !chapterNum) {
+if(!bookFolder || !chapterNum){
   document.getElementById("bookTitle").textContent = "未选择书籍";
-  bookDiv.innerHTML = "<p style='color:red'>❌ URL 缺少 ?book=名称 &chapter=数字</p>";
-} else {
-  loadChapter(bookFolder, chapterNum);
+  bookDiv.innerHTML="<p style='color:red'>❌ URL 缺少 ?book=名称 &chapter=数字</p>";
+}else{
+  loadChapter(bookFolder,chapterNum);
 }
 </script>
 </body>
