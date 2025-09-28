@@ -5,18 +5,42 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>书库</title>
 <style>
-body { background:#111; color:#0f0; font-family: monospace; margin:0; padding:0; }
-nav { background:#000; padding:10px; text-align:center; }
-nav a { color:#0f0; text-decoration:none; margin:0 15px; }
+body {
+    background:#111;
+    color:#0f0;
+    font-family: monospace;
+    margin:0;
+    padding:0;
+}
+nav {
+    background:#000;
+    padding:10px;
+    text-align:center;
+}
+nav a {
+    color:#0f0;
+    text-decoration:none;
+    margin:0 15px;
+}
 nav a:hover { text-decoration:underline; }
-h1 { text-align:center; margin:20px 0; }
+
+h1 {
+    text-align:center;
+    margin:20px 0;
+}
+
+/* 书籍网格布局 */
 #book-list {
     display:grid;
     grid-template-columns: repeat(auto-fill, minmax(180px,1fr));
     gap:15px;
     padding:10px;
 }
+
+/* 卡片统一用 a */
 .book-card {
+    display:flex;
+    flex-direction:column;
     background-color:#111;
     color:#0f0;
     border:1px solid #0f0;
@@ -24,6 +48,7 @@ h1 { text-align:center; margin:20px 0; }
     overflow:hidden;
     cursor:pointer;
     text-align:center;
+    text-decoration:none; /* 去掉链接下划线 */
     transition: transform 0.3s, box-shadow 0.3s;
 }
 .book-card:hover {
@@ -35,9 +60,19 @@ h1 { text-align:center; margin:20px 0; }
     height:220px;
     object-fit:cover;
 }
-.book-info { padding:8px; }
-.book-info h3 { font-size:1.1rem; margin-bottom:4px; }
-.book-info p { font-size:0.9rem; opacity:0.85; margin:0; }
+.book-info {
+    padding:8px;
+    flex-grow:1; /* 保证文字区域高度一致 */
+}
+.book-info h3 {
+    font-size:1.1rem;
+    margin:8px 0 4px;
+}
+.book-info p {
+    font-size:0.9rem;
+    opacity:0.85;
+    margin:0;
+}
 </style>
 </head>
 <body>
@@ -53,136 +88,119 @@ h1 { text-align:center; margin:20px 0; }
 
 <div id="book-list">
 
-<div class="book-card" onclick="location.href='wagner.html?book=book1'">
-    <img src="https://i.postimg.cc/Bvy1YpFR/Yevgeny-Prigozhin.jpg" alt="叶夫根尼·普里戈任（Yevgeny Prigozhin）">
-    <div class="book-info">
-        <h3>趋吉避凶-叔敖</h3>
-        <p>叶夫根尼·普里戈任（Yevgeny Prigozhin）</p>
-    </div>
-</div>
+<a class="book-card" href="wagner.html?book=book1">
+  <img src="https://i.postimg.cc/Bvy1YpFR/Yevgeny-Prigozhin.jpg" alt="叶夫根尼·普里戈任">
+  <div class="book-info">
+      <h3>趋吉避凶-叔敖</h3>
+      <p>叶夫根尼·普里戈zhin</p>
+  </div>
+</a>
 
-<!-- 1 -->
-<div class="book-card" onclick="location.href='books.html?book=book1'">
-    <img src="https://i.postimg.cc/MHRfxz7B/getImage.webp" alt="21世纪21堂课">
-    <div class="book-info">
-        <h3>21世纪21堂课</h3>
-        <p>尤瓦尔·赫拉利</p>
-    </div>
-</div>
+<a class="book-card" href="books.html?book=book1">
+  <img src="https://i.postimg.cc/MHRfxz7B/getImage.webp" alt="21世纪21堂课">
+  <div class="book-info">
+      <h3>21世纪21堂课</h3>
+      <p>尤瓦尔·赫拉利</p>
+  </div>
+</a>
 
-<div class="book-card" onclick="location.href='book2.html?book=book2'">
-    <img src="https://i.postimg.cc/qMN7SM1m/image.jpg" alt="乌合之众">
-    <div class="book-info">
-        <h3>乌合之众</h3>
-        <p>古斯塔夫·勒庞</p>
-    </div>
-</div>
+<a class="book-card" href="book2.html?book=book2">
+  <img src="https://i.postimg.cc/qMN7SM1m/image.jpg" alt="乌合之众">
+  <div class="book-info">
+      <h3>乌合之众</h3>
+      <p>古斯塔夫·勒庞</p>
+  </div>
+</a>
 
-<!-- 2 -->
 <a class="book-card" href="reader2.html?book=book2&chapter=cover">
-    <img src="https://i.postimg.cc/qMN7SM1m/image.jpg" alt="低调影人">
-    <div class="book-info">
-        <h3>低调是一种“深藏不露”的力量。</h3>
-        <p>叔敖</p>
-    </div>
-</div>
- <!-- 3 -->
+  <img src="https://i.postimg.cc/qMN7SM1m/image.jpg" alt="低调影人">
+  <div class="book-info">
+      <h3>低调是一种“深藏不露”的力量。</h3>
+      <p>叔敖</p>
+  </div>
+</a>
+
 <a class="book-card" href="reader2.html?book=book3&chapter=cover">
-    <img src="https://i.postimg.cc/Fzp8mYh5/image.jpg" alt="人性的弱点">
-    <div class="book-info">
+  <img src="https://i.postimg.cc/Fzp8mYh5/image.jpg" alt="人性的弱点">
+  <div class="book-info">
       <h3>人性的弱点</h3>
       <p>戴尔·卡耐基</p>
-    </div>
-  </a>
+  </div>
+</a>
 
-  <!-- 4 -->
 <a class="book-card" href="reader2.html?book=book4&chapter=cover">
   <img src="https://i.postimg.cc/k5KscCrG/image.jpg" alt="习惯的力量">
   <div class="book-info">
-    <h3>习惯的力量</h3>
-    <p>查尔斯·杜希格</p>
+      <h3>习惯的力量</h3>
+      <p>查尔斯·杜希格</p>
   </div>
 </a>
 
-<!-- 5 -->
 <a class="book-card" href="reader2.html?book=book5&chapter=cover">
   <img src="https://i.postimg.cc/y8cm6FHD/image.jpg" alt="自私的基因">
   <div class="book-info">
-    <h3>自私的基因</h3>
-    <p>理查德·道金斯</p>
+      <h3>自私的基因</h3>
+      <p>理查德·道金斯</p>
   </div>
 </a>
 
-<!-- 6 -->
 <a class="book-card" href="reader2.html?book=book6&chapter=cover">
   <img src="https://i.postimg.cc/RhgzG866/image.jpg" alt="社会性动物">
   <div class="book-info">
-    <h3>社会性动物</h3>
-    <p>大卫·迈尔斯</p>
+      <h3>社会性动物</h3>
+      <p>大卫·迈尔斯</p>
   </div>
 </a>
 
-<!-- 7 -->
 <a class="book-card" href="reader2.html?book=book7&chapter=cover">
   <img src="https://i.postimg.cc/ydn5zRV2/image.jpg" alt="人类简史">
   <div class="book-info">
-    <h3>人类简史</h3>
-    <p>尤瓦尔·赫拉利</p>
+      <h3>人类简史</h3>
+      <p>尤瓦尔·赫拉利</p>
   </div>
 </a>
 
-<!-- 8 -->
 <a class="book-card" href="reader2.html?book=book8&chapter=cover">
   <img src="https://i.postimg.cc/3rBLV3kD/image.jpg" alt="自卑与超越">
   <div class="book-info">
-    <h3>自卑与超越</h3>
-    <p>阿尔弗雷德·阿德勒</p>
+      <h3>自卑与超越</h3>
+      <p>阿尔弗雷德·阿德勒</p>
   </div>
 </a>
 
-<!-- 9 -->
 <a class="book-card" href="reader2.html?book=book9&chapter=cover">
   <img src="https://i.postimg.cc/pT1ZZJVV/image.jpg" alt="利维坦">
   <div class="book-info">
-    <h3>利维坦</h3>
-    <p>托马斯·霍布斯</p>
+      <h3>利维坦</h3>
+      <p>托马斯·霍布斯</p>
   </div>
 </a>
 
-<!-- 10 -->
 <a class="book-card" href="reader2.html?book=book10&chapter=cover">
   <img src="https://i.postimg.cc/k52F5tFk/image.png" alt="君主论">
   <div class="book-info">
-    <h3>君主论</h3>
-    <p>马基雅维利</p>
+      <h3>君主论</h3>
+      <p>马基雅维利</p>
   </div>
 </a>
 
-<!-- 11 -->
 <a class="book-card" href="reader2.html?book=book11&chapter=cover">
   <img src="https://i.postimg.cc/Dw9mqJKV/image.jpg" alt="罪与罚">
   <div class="book-info">
-    <h3>罪与罚</h3>
-    <p>陀思妥耶夫斯基</p>
+      <h3>罪与罚</h3>
+      <p>陀思妥耶夫斯基</p>
   </div>
 </a>
 
-<!-- 12 -->
 <a class="book-card" href="reader2.html?book=book12&chapter=cover">
   <img src="https://i.postimg.cc/x8p1qqP4/image.jpg" alt="存在与虚无">
   <div class="book-info">
-    <h3>存在与虚无</h3>
-    <p>让-保罗·萨特</p>
+      <h3>存在与虚无</h3>
+      <p>让-保罗·萨特</p>
   </div>
 </a>
 
-
-<script>
-function openLibrary(filePath){
-    // 点击书籍卡片跳转到 audiobook.html 并传递 JSON 文件路径
-    window.location.href = `audiobook.html?file=${filePath}`;
-}
-</script>
+</div>
 
 </body>
 </html>
