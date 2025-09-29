@@ -96,3 +96,35 @@ body {
   from {opacity: 0; transform: translateY(-40px);}
   to {opacity: 1; transform: translateY(0);}
 }
+
+/* --- Logo Styles --- */
+.logo {
+  height: 60px;      /* control logo size */
+  width: auto;       /* keeps aspect ratio */
+  display: block;    /* removes inline gap */
+}
+
+/* --- Navbar Example --- */
+.navbar {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  background: #222;     /* dark background */
+}
+
+.navbar a {
+  text-decoration: none;
+  color: white;
+  margin-left: 15px;
+  font-size: 18px;
+}
+
+/* --- Responsive: smaller logo on mobile --- */
+@media (max-width: 600px) {
+  .logo {
+    height: 40px;   /* shrink logo more on small screens */
+  }
+  .navbar a {
+    font-size: 16px;
+  }
+}
