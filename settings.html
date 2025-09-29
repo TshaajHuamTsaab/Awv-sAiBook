@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title> Settings</title>
+<title>Settings</title>
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -54,9 +54,6 @@ button:hover {
 .plan {
   margin-top: 15px;
 }
-.plan label {
-  font-weight: bold;
-}
 .notice {
   text-align: center;
   font-size: 14px;
@@ -88,50 +85,21 @@ button:hover {
   cursor: pointer;
   font-size: 14px;
 }
-/* 居中显示退出按钮 */
-.logout {
-  display: block;
-  width: fit-content;
-  margin: 40px auto;
-  padding: 10px 24px;
-  border-radius: 8px;
-  background: linear-gradient(90deg, #ff4d4d, #ff8080);
-  color: #fff !important;
-  font-weight: bold;
-  text-decoration: none;
-  text-align: center;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-.logout:hover {
-  background: linear-gradient(90deg, #ff1a1a, #ff6666);
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.logout-icon {
-  width: 32px;
-  height: 32px;
-  cursor: pointer;
-}
 .logout-container {
   display: flex;
-  justify-content: center; /* 居中 */
+  justify-content: center;
   margin-top: 30px;
 }
-
 .logout-icon {
   width: 48px;
   height: 48px;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
 .logout-icon:hover {
   transform: scale(1.1);
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
-
 </style>
 </head>
 <body>
@@ -168,7 +136,7 @@ button:hover {
     <label id="labelPhone">Phone</label>
     <input type="tel" id="phone" required>
 
-    <!-- Only Premium Plan -->
+    <!-- Premium Plan -->
     <div class="plan">
       <label><input type="radio" name="plan" value="premium" checked> 💎 Premium Only</label>
     </div>
@@ -177,10 +145,11 @@ button:hover {
     <button type="submit">开通VIP会员</button>
   </form>
 
-    <!-- Logout button with image -->
+  <!-- Logout button -->
   <div class="logout-container">
     <img src="logout.png" alt="Logout" class="logout-icon" onclick="logout()">
   </div>
+</div>
 
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -198,20 +167,34 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
+// ====== 登录状态检查 ======
+auth.onAuthStateChanged((user) => {
+  if (!user) {
+    window.location.replace("index.html");
+  }
+});
+
 // ====== Logout ======
 async function logout() {
   try {
     await auth.signOut();
     sessionStorage.clear();
     localStorage.clear();
-    alert("✅ 已退出！");
-    window.location.href = "index.html";
+    window.location.replace("index.html"); // 用 replace 防止返回
   } catch (err) {
     alert("❌ 退出失败: " + err.message);
   }
 }
 
-// ====== Language translations ======
+// ====== 防止后退进入 ======
+history.pushState(null, null, window.location.href);
+window.onpopstate = function () {
+  auth.signOut().then(() => {
+    window.location.replace("index.html");
+  });
+};
+
+// ====== 多语言支持 ======
 const translations = {
   en: {title:"Premium Profile Settings", name:"Name", email:"Email", password:"Password", age:"Age", gender:"Gender", phone:"Phone"},
   es: {title:"Configuración Premium", name:"Nombre", email:"Correo electrónico", password:"Contraseña", age:"Edad", gender:"Género", phone:"Teléfono"},
@@ -287,15 +270,15 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
   const pic = previewPic.src || generateAvatar(name);
 
   const confirmText =
-    "Please confirm your PREMIUM account details:\n\n" +
-    "👤 Name: " + name + "\n" +
-    "📧 Email: " + email + "\n" +
-    "🔑 Password: " + "*".repeat(password.length) + "\n" +
-    "🎂 Age: " + age + "\n" +
-    "⚧ Gender: " + gender + "\n" +
-    "📱 Phone: " + phone + "\n" +
-    "💎 Plan: " + plan.toUpperCase() + "\n\n" +
-    "Do you want to create this Premium account?";
+    "请确认您的 VIP 用户户信息:\n\n" +
+    "👤 姓名: " + name + "\n" +
+    "📧 邮箱: " + email + "\n" +
+    "🔑 密码: " + "*".repeat(password.length) + "\n" +
+    "🎂 年龄: " + age + "\n" +
+    "⚧ 性别: " + gender + "\n" +
+    "📱 手机: " + phone + "\n" +
+    "💎 会员类型: " + plan.toUpperCase() + "\n\n" +
+    "是否确认创建此 VIP 用户？";
 
   if (confirm(confirmText)) {
     const profileData = {name, email, password, age, gender, phone, plan, pic};
