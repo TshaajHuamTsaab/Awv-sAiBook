@@ -27,6 +27,7 @@ body {
   text-decoration: none;
 }
 
+/* Navigation links */
 .nav-links a {
   margin-left: 20px;
   text-decoration: none;
@@ -68,6 +69,7 @@ body {
   color: #e0e0e0;
 }
 
+/* Buttons */
 .btn {
   display: inline-block;
   padding: 12px 28px;
@@ -83,6 +85,32 @@ body {
 .btn:hover {
   transform: scale(1.05);
   box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+
+/* Settings 按钮整体 */
+.settings {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;        /* bigger button */
+  height: 80px;
+  border: none;
+  border-radius: 50%;
+  background: #ffa502;
+  cursor: pointer;
+  transition: 0.3s;
+  padding: 0;         /* remove extra padding */
+}
+
+.settings:hover {
+  background: #e67e22;
+  transform: rotate(90deg);
+}
+
+/* Settings 图标随按钮大小 */
+.settings-icon {
+  width: 40px;    /* bigger icon inside */
+  height: 40px;
 }
 
 /* Animations */
@@ -119,12 +147,23 @@ body {
   font-size: 18px;
 }
 
-/* --- Responsive: smaller logo on mobile --- */
+/* --- Responsive: smaller logo & icon on mobile --- */
 @media (max-width: 600px) {
   .logo {
-    height: 40px;   /* shrink logo more on small screens */
+    height: 40px;
   }
   .navbar a {
     font-size: 16px;
   }
+  .settings-icon {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+.btn-icon {
+  width: 22px;       /* icon size */
+  height: 22px;
+  margin-right: 8px; /* space between icon and text */
+  vertical-align: middle;
 }
